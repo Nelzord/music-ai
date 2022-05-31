@@ -41,24 +41,32 @@ def musicgen(x):
 
 #Takes contents of music generator, returning instruments, keys, and majors
 contents = (musicgen(s))
-voiceList = []
-insList = []
-keyList = []
-for i in contents:
-    print(i)
-    q = i.index("Voice")
-    voice = i[q+8:q+14]
-    voiceList.append(voice.strip(""))
-    q = i.index("instruments")
-    instrument = i[q+11:q+26]
-    insList.append(instrument.strip(""))
-    q = i.index("key")
-    key = i[q+4:q+13]
-    keyList.append(key.strip(""))
+def programgen(contents):
+    voiceList = []
+    insList = []
+    keyList = []
+    for i in contents:
+        print(i)
+        q = i.index("Voice")
+        voice = i[q+8:q+14]
+        voiceList.append(voice.strip(""))
+        q = i.index("instruments")
+        instrument = i[q+11:q+26]
+        insList.append(instrument.strip(""))
+        q = i.index("key")
+        key = i[q+4:q+13]
+        keyList.append(key.strip(""))
+    return([insList, voiceList, keyList])
+
+result = programgen(contents)
 
 #Printing the associated values with the songs yielded from music gen
+
 print()
-print(insList)
-print(voiceList)
-print(keyList)
+print("Below are the associated values with your keyword")
+print("Instruments: " + str(result[0]))
+print("Ranges: " + str(result[1]))
+print("Keys: " + str(result[2]))
+
+
 
