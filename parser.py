@@ -46,16 +46,21 @@ def programgen(contents):
     insList = []
     keyList = []
     for i in contents:
-        print(i)
-        q = i.index("Voice")
-        voice = i[q+8:q+14]
-        voiceList.append(voice.strip(""))
-        q = i.index("instruments")
-        instrument = i[q+11:q+26]
-        insList.append(instrument.strip(""))
-        q = i.index("key")
-        key = i[q+4:q+13]
-        keyList.append(key.strip(""))
+        try:
+            print(i)
+            q = i.index("Voice")
+            voice = i[q+8:q+14]
+            voiceList.append(voice.strip(""))
+            q = i.index("instruments")
+            instrument = i[q+11:q+26]
+            insList.append(instrument.strip(""))
+            q = i.index("key")
+            key = i[q+4:q+13]
+            keyList.append(key.strip(""))
+        except:
+            print("an error has occurred")
+
+
     return([insList, voiceList, keyList])
 
 result = programgen(contents)
