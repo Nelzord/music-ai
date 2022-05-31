@@ -24,7 +24,7 @@ def generator():
 s = generator()
 
 
-
+#Using the list of generated song, musicgen finds the associated sheet music with the corresponding songs
 def musicgen(x):
     lister = []
     for i in range(len(x)):
@@ -38,6 +38,27 @@ def musicgen(x):
         lister.append(str(loc).splitlines()[1])
     return(lister)
 
+
+#Takes contents of music generator, returning instruments, keys, and majors
 contents = (musicgen(s))
+voiceList = []
+insList = []
+keyList = []
 for i in contents:
     print(i)
+    q = i.index("Voice")
+    voice = i[q+8:q+14]
+    voiceList.append(voice.strip(""))
+    q = i.index("instruments")
+    instrument = i[q+11:q+26]
+    insList.append(instrument.strip(""))
+    q = i.index("key")
+    key = i[q+4:q+13]
+    keyList.append(key.strip(""))
+
+#Printing the associated values with the songs yielded from music gen
+print()
+print(insList)
+print(voiceList)
+print(keyList)
+
