@@ -1,11 +1,13 @@
 import tensorflow as tf
 import numpy as np
 
+#pseudocode for model
 
-#model takes in Instruments, Ranges, Keys, and associated word from parser.py
 
-#tensorflow generates intro, verse, pre-chorus, chorus and bridge
+#take ranges and keys from main and send them through model
 
-#model generates instruments, bpm, and notelist for main.py to handle
+#ensure song user selects is in file
 
-#pass the associated values to main.py and let main handle music creation
+#take values from model and pipe them through music box
+
+#output through mp3 with the desired file name
