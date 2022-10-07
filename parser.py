@@ -3,23 +3,26 @@ from bs4 import BeautifulSoup
 
 #Generates a list of songs dependent on user input
 def generator():
-    search = input("Input a word to create a song: ")
-    url = 'https://www.lyrics.com/lyrics/' + search
-    r = requests.get(url)
-    soup = BeautifulSoup(r.text, 'html.parser')
-    results = (soup.find_all('b'))
+    try:
+        search = input("Input a word to create a song: ")
+        url = 'https://www.lyrics.com/lyrics/' + search
+        r = requests.get(url)
+        soup = BeautifulSoup(r.text, 'html.parser')
+        results = (soup.find_all('b'))
 
-    songList = []
-    for i in (range (len (results))):
-        if i % 2 == 0:
-            s = ""
-            s += results[i].text
-        else:
-            s += " by "
-            s += results[i].text
-            songList.append(s)
-            s = ""
-    return (songList)
+        songList = []
+        for i in (range (len (results))):
+            if i % 2 == 0:
+                s = ""
+                s += results[i].text
+            else:
+                s += " by "
+                s += results[i].text
+                songList.append(s)
+                s = ""
+        return (songList)
+    except:
+        print("Please try another word, there are not enough song occurences.")
 
 s = generator()
 
@@ -67,11 +70,17 @@ result = programgen(contents)
 
 #Printing the associated values with the songs yielded from music gen
 
-print()
-print("Below are the associated values with your keyword")
-print("Instruments: " + str(result[0]))
-print("Ranges: " + str(result[1]))
-print("Keys: " + str(result[2]))
+def outputVal():
+    print()
+    print("Below are the associated values with your keyword")
+    print("Instruments: " + str(result[0]))
+    print("Ranges: " + str(result[1]))
+    print("Keys: " + str(result[2]))
+
+
+outputVal()
+
+
 
 
 
