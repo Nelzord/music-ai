@@ -1,25 +1,29 @@
-import requests
+import requests, re, spotipy
 from bs4 import BeautifulSoup
+from spotipy.oauth2 import SpotifyClientCredentials
 
+#Hidden keys
+
+NEWLINE = '\n'
 #Generates a list of songs dependent on user input
 def generator():
     try:
-        search = input("Input a word to create a song: ")
-        url = 'https://www.lyrics.com/lyrics/' + search
-        r = requests.get(url)
-        soup = BeautifulSoup(r.text, 'html.parser')
-        results = (soup.find_all('b'))
-
         songList = []
-        for i in (range (len (results))):
-            if i % 2 == 0:
-                s = ""
-                s += results[i].text
-            else:
-                s += " by "
-                s += results[i].text
-                songList.append(s)
-                s = ""
+        search = input("Input a word to create a song: ")
+        for z in search.split(" "):
+            url = 'https://www.lyrics.com/lyrics/' + search
+            r = requests.get(url)
+            soup = BeautifulSoup(r.text, 'html.parser')
+            results = (soup.find_all('b'))
+            for i in (range (len (results))):
+                if i % 2 == 0:
+                    s = ""
+                    s += results[i].text
+                else:
+                    s += " by "
+                    s += results[i].text
+                    songList.append(s)
+                    s = ""
         return (songList)
     except:
         print("Please try another word, there are not enough song occurences.")
@@ -35,7 +39,6 @@ def musicgen(x):
         url = 'https://www.musicnotes.com/search/go?w=' + search
         r = requests.get(url)
         soup = BeautifulSoup(r.text, 'html.parser')
-        #print(soup)
         results = (soup.find_all('td'))
         loc = results[30]
         lister.append(str(loc).splitlines()[1])
@@ -45,12 +48,14 @@ def musicgen(x):
 #Takes contents of music generator, returning instruments, keys, and majors
 contents = (musicgen(s))
 def programgen(contents):
+    songList = []
     voiceList = []
     insList = []
     keyList = []
     for i in contents:
         try:
-            print(i)
+            q = re.findall('"([^"]*)"', i)[5]
+            songList.append(q)
             q = i.index("Voice")
             voice = i[q+8:q+14]
             voiceList.append(voice.strip(""))
@@ -61,10 +66,10 @@ def programgen(contents):
             key = i[q+4:q+13]
             keyList.append(key.strip(""))
         except:
-            print("an error has occurred")
+            print("HTML failed to parse.")
 
 
-    return([insList, voiceList, keyList])
+    return([insList, voiceList, keyList, songList])
 
 result = programgen(contents)
 
@@ -73,14 +78,59 @@ result = programgen(contents)
 def outputVal():
     print()
     print("Below are the associated values with your keyword")
+    print("Song Names: " + str(result[3]))
     print("Instruments: " + str(result[0]))
     print("Ranges: " + str(result[1]))
     print("Keys: " + str(result[2]))
 
 
-outputVal()
+def getSongStats(songName: str):
+    songVar = sp.search(q=songName, type="track", limit=3)['tracks']['items'][0]['id']
+    songStat = sp.audio_analysis(songVar)
+    songDic = {}
+    timAvg = sum(songStat['segments'][0]['timbre']) / len(songStat['segments'][0]['timbre'])
+    pitchAvg = sum(songStat['segments'][0]['pitches']) / len(songStat['segments'][0]['pitches'])
+    songDic['timbre'] = timAvg
+    songDic['pitch'] = pitchAvg
+    songDic['duration'] = songStat['track']['duration']
+    songDic['loudness'] = songStat['track']['loudness']
+    songDic['tempo'] = songStat['track']['tempo']
+    return songDic
 
+songSum = []
+finalSong = []
+for i in result[3]:
+    try:
+        songSum.append(getSongStats(i))
+    except:
+        print("Unable to get song stats.")
 
+timbre, loudness, pitch, duration, tempo = 0,0,0,0,0
 
+for i in songSum:
+    timbre += i['timbre']
+    loudness += i['pitch']
+    pitch += i['pitch']
+    duration += i['duration']
+    tempo += i['tempo']
 
+timbre = str(timbre/len(songSum))
+loudness = str(loudness/len(songSum))
+pitch = str(pitch/len(songSum))
+duration = str(duration/len(songSum))
+tempo = str(tempo/len(songSum))
+
+print('total timbre for the song is: ' + timbre)
+print('total loudness for the song is: ' + loudness)
+print('total pitch for the song is: ' + pitch)
+print('total duration for the song is: ' + duration)
+print('total tempo for the song is: ' + tempo)
+
+f = open("contents.txt", "w")
+f.write(timbre + NEWLINE)
+f.write(loudness + NEWLINE)
+f.write(pitch + NEWLINE)
+f.write(duration + NEWLINE)
+f.write(tempo)
+f.close()
 
